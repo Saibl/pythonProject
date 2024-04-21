@@ -189,7 +189,7 @@ z wbudowanego modułu struct. Zamienia ona tekst na dane binarne (w takiej posta
 pamięci komputera). Generalnie, struct służy do obsługi danych binarnych przechowywanych w plikach,
 bazie danych lub z połączeń sieciowych itp.
 '''
-from struct import *
+# from struct import *
 '''
 Dodatkowe informacje o funkcji pack(), pierwszy argument pack()
 zawiera kolejne typy danach które mają być pakowane tj.
@@ -327,12 +327,13 @@ globals,locals - opcjonalne  x = 10
 # products = ['Philips', 'Panasonic', 'Samsung']
 # products2 = ['Grundig', 'Hisense', 'LG']
 # products3 = ['Sony', 'TCL', 'Toshiba']
-# f1 = open(filename, 'wb')
+# f1 = open(filename, 'wb')    #wb- Otwarcie pliku do zapisu w trybie binarnym
 # pickle.dump((products,products2,products3 ),f1)
 # f1.close()
 # f1 = open(filename, 'wb')
 # del products
 # pickle.dump((products2,products3 ),f1)
+# f1.close()
 #
 # f1 = open(filename, 'rb')
 # items = pickle.load(f1)
@@ -341,12 +342,22 @@ globals,locals - opcjonalne  x = 10
 
 
 
-
-
 ########################## Zadanie 7 ########################
 ## Zapisz do pliku liczbę 123456789, spakuj, rozpakuj dane
 ## Sprawdź w dokumentacji pakietu struct typ danej
 ## https://docs.python.org/3/library/struct.html
+
+# from struct import *
+# os.chdir('C:\\Users\Admin\PycharmProjects\pythonProject')
+# filename = 'lab4zad7.data'
+# f = open(filename, 'wb')
+# number = pack('l',123456789)
+# f.write(number)
+# f.close()
+#
+# f1 = open(filename,'rb')
+# print(unpack('l',f1.read()))
+# f1.close()
 
 ########################## Zadanie 8 #########################
 ## Utwórz i zapisz do folderu 5 dowolnych plików tekstowych z dowolnym tekstem
@@ -362,3 +373,55 @@ globals,locals - opcjonalne  x = 10
 ## b) dla wszystkich plików które w nazwie nie mają liczby 0
 ##    wyznaczy liczbę słów
 ## c) dla plików zakończonych ciągiem znaków 'ABC' wyznacz liczbę wyrazów złożonych z conajmnie 3 liter.
+
+# os.makedirs('C:\\Users\Admin\PycharmProjects\pythonProject\lab4zad8') ##utworzenie folderu lab4zad8
+
+# def fun(folder):
+#     folder_content = os.listdir()
+#     print(folder_content)
+#     abc = [plik for plik in folder_content if plik.endswith('ABC.txt')]
+#     print("Pliki ABC: ", abc)
+#     for filee in abc:
+#         with open(filee, 'r') as file:
+#             num=0
+#             textt = file.read()
+#             words = textt.split()
+#             for word in words:
+#                 if len(word) >= 3:
+#                     num += 1
+#     return "Liczba wyrazow zlozonych z conajmniej 3 liter wynosi: " + str(num)
+#
+# def fun2(folder):
+#     id_num = 0
+#     folder_content = os.listdir()
+#     for file in folder_content:
+#         word_num = 0
+#         if '0' in file:
+#             id_num += 1
+#         else:
+#             with open(file, 'r') as file:
+#                 textt = file.read()
+#                 words = textt.split()
+#                 for word in words:
+#                     word_num += 1
+#     fun(os.getcwd())
+#     return "Liczba plików zawierajaca w identyfikatorze ID liczbe '0': " + str(id_num) + "\nIlosc slow w plikach ktore nie maja liczby '0': " + str(word_num)
+#
+#
+# text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut erat nibh. Mauris blandit diam nec ex congue, sed posuere sem ornare. Morbi sollicitudin justo nibh, et pulvinar orci malesuada efficitur. Mauris id ex quis magna auctor cursus. Proin eu gravida eros. Sed pretium tellus faucibus enim sagittis vulputate. Phasellus placerat magna diam."
+# os.chdir('C:\\Users\Admin\PycharmProjects\pythonProject\lab4zad8')
+# current_folder = os.getcwd()
+# files = []
+# files.append(open('Tekst1ID_ABC.txt', 'w', encoding='utf-8'))
+# files.append(open('Tekst2ID_405.txt', 'w', encoding='utf-8'))
+# files.append(open('Tekst3ID_607.txt', 'w', encoding='utf-8'))
+# files.append(open('Tekst4ID_ABC.txt', 'w', encoding='utf-8'))
+# files.append(open('Tekst5ID_DEF.txt', 'w', encoding='utf-8'))
+#
+# for file in files:
+#     file.write(text)
+#
+# for file in files:
+#     file.close()
+#
+# print(fun2(current_folder))
