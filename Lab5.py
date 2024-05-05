@@ -241,39 +241,36 @@
 ## Don't forget to handle exceptions (obsłudze wyjątków)
 ## Save result to *.pkl file use picle package
 # '''
-import pickle
-def numbers(x: int, y: int) -> int:
-    """
-        Funkcja sprawdza dla kazdej liczby z zakresu od x do y czy jest podzielna przez 7, oraz czy nie jest wielokrotnoscia 5,
-        wypisujac tylko liczby spelniajace oba warunki w formie listy.
-
-        Args:
-          x (int): Poczatek zakresu
-          y (int): koniec zakresu
-
-        Returns:
-          lista liczb podzielnych przez 7, ale nie podzielnych przez 5
-    """
-    try:
-        if x >= y:
-            raise ValueError("Poczatek zakresu (x) musi byc mniejszy niz koniec zakresu (y)")
-    except ValueError as e:
-        print(f"Blad: {e}")
-
-    wynik = []
-    for liczba in range(x,y):
-        if liczba %7 == 0 and liczba %5 != 0:
-            wynik.append(liczba)
-        else:
-            continue
-    print(wynik)
-
-x = 1000
-y = 1200
-wynik = numbers(x,y)
-
-with open("wynik.pkl", "wb") as file:
-    pickle.dump(wynik, file)
+# import pickle
+# def numbers(x: int, y: int) -> int:
+#     """
+#         Funkcja sprawdza dla kazdej liczby z zakresu od x do y czy jest podzielna przez 7, oraz czy nie jest wielokrotnoscia 5,
+#         wypisujac tylko liczby spelniajace oba warunki w formie listy. Jesli x jest wieksze od y program wypisuje blad.
+#
+#         Args:
+#           x (int): Poczatek zakresu
+#           y (int): koniec zakresu
+#
+#         Returns:
+#           lista liczb podzielnych przez 7, ale nie podzielnych przez 5
+#     """
+#
+#     wynik = []
+#     for liczba in range(x,y):
+#         if liczba %7 == 0 and liczba %5 != 0:
+#             wynik.append(liczba)
+#         else:
+#             continue
+#     print(wynik)
+#
+# x = 1000
+# y = 1200
+# if x >= y:
+#     raise ValueError("Poczatek zakresu (x) musi byc mniejszy niz koniec zakresu (y)")
+# wynik = numbers(x,y)
+#
+# with open("wynik.pkl", "wb") as file:
+#     pickle.dump(wynik, file)
 
 # help(numbers)
 ##### do testów możesz użyć:
@@ -303,6 +300,35 @@ with open("wynik.pkl", "wb") as file:
 ## You should to document your code by using python docstrings (google)
 ###############
 
+# def power(*args):
+#     """
+#     Funkcja przyjmuje sekwencje liczb oddzielonych przecinkami z konsoli i zwraca ich potegi.
+#
+#     Args:
+#         *args: Argumenty do obliczenia potegi. Może być dowolna liczba argumentów, ale nie wiecej niż 99.
+#
+#     Returns:
+#         list: Lista zawierająca potegi kolejnych argumentów. Potega i-tego argumentu to i-ta potęga tego argumentu.
+#
+#     Raises:
+#         ValueError: Jeśli liczba argumentów przekracza 99.
+#     """
+#     if len(args) > 99:
+#         raise ValueError("Maksymalna liczba argumentów wynosi 99.")
+#
+#     powers = []
+#     for i, arg in enumerate(args, start=1):
+#         powers.append(arg ** arg)
+#
+#     return powers
+#
+# numbers = input("Podaj liczby oddzielone przecinkami: ").split(',')
+# numbers = [int(num) for num in numbers]
+# results = power(*numbers)
+# print(results)
+# help(power)
+
+
 ################ Task 4
 ## Create function with multiple arguments (x1,x2,...,xn) that accepts a sequence of
 ## comma-separated numbers from console and returns:
@@ -319,6 +345,40 @@ with open("wynik.pkl", "wb") as file:
 ## Don't forget to handle exceptions (obsłudze wyjątków)
 ###############
 
+# def power(*args):
+#     """
+#     Funkcja przyjmuje sekwencje liczb oddzielonych przecinkami z konsoli i zwraca ich potegi.
+#
+#     Args:
+#         *args: Argumenty do obliczenia potegi. Może być dowolna liczba argumentów, ale nie wiecej niż 99.
+#
+#     Returns:
+#         list: Lista zawierająca potegi kolejnych argumentów. Potega i-tego argumentu to i-ta potęga tego argumentu.
+#
+#     Raises:
+#         ValueError: Jeśli liczba argumentów przekracza 99.
+#     """
+#     if len(args) > 99:
+#         raise ValueError("Maksymalna liczba argumentów wynosi 99.")
+#
+#     powers = []
+#     for i, arg in enumerate(args, start=1):
+#         var_name = 'x' + str(i)
+#         locals()[var_name] = arg
+#         exec(f"{var_name} = {arg}")  # Przypisz wartość argumentu do zmiennej lokalnej
+#         exec(f"{var_name}_power = {var_name} ** {var_name}")  # Oblicz potęgę argumentu i przypisz do zmiennej lokalnej
+#         powers.append(locals()[f"{var_name}_power"])  # Dodaj wynik do listy powers
+#
+#     return powers
+#
+#     return powers
+#
+# numbers = input("Podaj liczby oddzielone przecinkami: ").split(',')
+# numbers = [int(num) for num in numbers]
+# results = power(*numbers)
+# print(results)
+
+
 ########################## Task 5 ########################
 ## The first step,
 ## generate test data: create folder. Create 5 text files to this folder,
@@ -334,3 +394,64 @@ with open("wynik.pkl", "wb") as file:
 ## b) if the file has 0 in the filename then the function counts words in the text of the file
 ## c) if the filename contains 'EF.txt', then the function copy this file to
 ## 'DocumentLab5copy' directory
+
+import os
+import shutil
+# os.makedirs('C:\\Users\Admin\PycharmProjects\pythonProject\lab5zad5') ##utworzenie folderu lab5zad5
+
+def dec(func):
+    def wrapper(folder):
+        folder_content = os.listdir(folder)
+        num_zero_files = 0
+        num_words = 0
+        for file in folder_content:
+            if '0' in file:
+                num_zero_files += 1
+                with open(file, 'r') as file:
+                    text = file.read()
+                    words = text.split()
+                    for word in words:
+                        num_words += 1
+        if 'EF.txt' in file:
+            destination_folder = os.path.join(folder, 'DocumentLab5copy')
+            if not os.path.exists(destination_folder):
+                os.makedirs(destination_folder)
+            shutil.copy(file, destination_folder)
+        result = func(folder)
+        result += f"\nLiczba plików z 0 w nazwie: {num_zero_files}"
+        result += f"\nLiczba wyrazów w plikach z 0 w nazwie: {num_words}"
+        return result
+    return wrapper
+
+@dec
+def fun(folder):
+    folder_content = os.listdir()
+    print(folder_content)
+    abc = [plik for plik in folder_content if plik.endswith('ABC.txt')]
+    for filee in abc:
+        with open(filee, 'r') as file:
+            num_words = 0
+            textt = file.read()
+            words = textt.split()
+            for word in words:
+                if len(word) >= 3:
+                    num_words += 1
+    return "Liczba wyrazow zlozonych z conajmniej 3 liter w plikach ABC wynosi: " + str(num_words)
+
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut erat nibh. Mauris blandit diam nec ex congue, sed posuere sem ornare. Morbi sollicitudin justo nibh, et pulvinar orci malesuada efficitur. Mauris id ex quis magna auctor cursus. Proin eu gravida eros. Sed pretium tellus faucibus enim sagittis vulputate. Phasellus placerat magna diam."
+os.chdir('C:\\Users\Admin\PycharmProjects\pythonProject\lab5zad5')
+current_folder = os.getcwd()
+files = []
+files.append(open('Tekst1ID_ABC.txt', 'w', encoding='utf-8'))
+files.append(open('Tekst2ID_405.txt', 'w', encoding='utf-8'))
+files.append(open('Tekst3ID_607.txt', 'w', encoding='utf-8'))
+files.append(open('Tekst4ID_ABC.txt', 'w', encoding='utf-8'))
+files.append(open('Tekst5ID_DEF.txt', 'w', encoding='utf-8'))
+
+for file in files:
+    file.write(text)
+
+for file in files:
+    file.close()
+
+print(fun(current_folder))
