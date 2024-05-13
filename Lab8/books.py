@@ -49,6 +49,7 @@ def add_book():
     PAGES = int(input("Podaj liczbe stron: "))
     CREATED = date.today()
     UPDATED = date.today()
+    STATUS = "available"
     ensure_newline(file_path)
     with open(file_path, mode='r') as plik:
         reader = csv.reader(plik)
@@ -61,8 +62,8 @@ def add_book():
 
     with open(file_path, mode='a', newline='') as plik:
         writer = csv.writer(plik)
-        writer.writerow([ID, AUTHOR, TITLE, PAGES, CREATED, UPDATED])
-        print(f"Ksiazka wpisana: {ID}, {AUTHOR}, {TITLE}, {PAGES}, {CREATED}, {UPDATED}")
+        writer.writerow([ID, AUTHOR, TITLE, PAGES, CREATED, UPDATED, STATUS])
+        print(f"Ksiazka wpisana: {ID}, {AUTHOR}, {TITLE}, {PAGES}, {CREATED}, {UPDATED}, {STATUS}")
 
 def del_book_ID():
     ID = input("Podaj ID ksiazki do usuniecia: ")
@@ -108,7 +109,6 @@ def output():
         for row in csv_reader:
             print(row)
 
-add_book()
 
 
 
