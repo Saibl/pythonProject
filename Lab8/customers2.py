@@ -11,6 +11,33 @@
 ## funkcja 4: wypożyczenie książki lub kilku książek przez klienta
 ## funkcja 5: zwrot 1 książki przez klienta
 
+"""
+System zarządzania biblioteką
+
+Ten program jest systemem zarządzania biblioteką, który umożliwia rejestrację użytkowników,
+usuwanie danych użytkowników, wypożyczanie książek i zwracanie książek. Wszystkie operacje
+są zapisywane w plikach CSV, a dane o wypożyczeniach są przechowywane w osobnych plikach
+tekstowych dla każdego użytkownika.
+
+Pliki:
+    - customer.csv: Przechowuje informacje o zarejestrowanych użytkownikach.
+    - address.csv: Przechowuje adresy zarejestrowanych użytkowników.
+    - book.csv: Przechowuje informacje o książkach dostępnych w bibliotece.
+    - DATABASE/: Katalog przechowujący pliki tekstowe z danymi o wypożyczeniach dla każdego użytkownika.
+
+Funkcje:
+    - dec(func)
+    - output2()
+    - ensure_newline(file_path)
+    - register_user(name, email, phone, country, city, street)
+    - del_user_name(name)
+    - del_user_ID(ID)
+    - borrow_books(customer_id, **kwargs)
+    - return_book(customer_id, book_to_return)
+    - return_books(customer_id, book_to_return)
+    - control_panel()
+"""
+
 import os
 import csv
 from datetime import date
@@ -265,12 +292,26 @@ def return_books(customer_id, book_to_return):
 
 
 def control_panel():
+    """
+        Panel kontrolny do zarządzania biblioteką.
+
+        Returns:
+            None
+        """
     a=0
     while True:
-        action = int(input("Wybierz opcję: (rejestracja(1) / usunięcie danych(2) / wypożyczenie książki (3) / oddanie książki(4) / exit(5): "))
+        print("\nWybierz opcję:")
+        print("1. Rejestracja użytkownika")
+        print("2. Usunięcie użytkownika po imieniu")
+        print("3. Usunięcie użytkownika po ID")
+        print("4. Wypożyczenie książek")
+        print("5. Zwrot książek")
+        print("6. Wyświetl użytkowników")
+        print("7. Wyjście")
+
+        action = int(input("Wybierz opcję (1-7): "))
 
         if action==1:
-            print("Proszę wprowadzić kolejno: Imie-Nazwisko, E-mail, nr telefonu, Państwo, Miasto, Ulicę ")
             name = input("Imię-Nazwisko: ")
             email = input("Adres e-mail: ")
             phone = input("Numer telefonu: ")
