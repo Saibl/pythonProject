@@ -42,7 +42,7 @@ def add_book():
 
         Returns:
             None
-        """
+    """
     ID = int(input("Podaj ID ksiazki: "))
     AUTHOR = input("Podaj autora: ")
     TITLE = input("Podaj tytul: ")

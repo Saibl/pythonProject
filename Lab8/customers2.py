@@ -22,11 +22,29 @@ file_path = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\cu
 if not os.path.exists('DATABASE'):
     os.makedirs('DATABASE')
 
+
+def dec(func):
+    def wrapper(customer_id, **kwargs):
+        # Wyciąganie tytułów książek z argumentów przekazanych przez kwargs
+        books_to_return = kwargs.get('books_to_return', [])
+
+        if not books_to_return:
+            print("Nie podano żadnych książek do wypożyczenia.")
+            return
+        for book_to_return in books_to_return:
+            book_to_return = book_to_return.strip()  # Usunięcie zbędnych spacji
+            func(customer_id, book_to_return)
+
+    return wrapper
+
+
 def output2():
     with open(file_path, mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             print(row)
+
+
 
 def ensure_newline(file_path):
     with open(file_path, 'r+') as file:
@@ -38,15 +56,11 @@ def ensure_newline(file_path):
         if last_char != '\n':
             file.write('\n')
 
-def register_user():
-    customer_file = 'DATABASE/customer.csv'
 
-    name = input("Podaj imię i nazwisko nowego klienta: ")
-    email = input("Podaj adres e-mail nowego klienta: ")
-    phone = input("Podaj numer telefonu nowego klienta: ")
-    country = input("Podaj Kraj zamieszkania: ")
-    city = input("Podaj Miasto: ")
-    street = input("Podaj nazwę ulicy: ")
+
+
+def register_user(name,email,phone,country,city,street):
+    customer_file = 'DATABASE/customer.csv'
     ensure_newline(file_path)
     # Generowanie losowego ID klienta
     customer_id = ''.join(random.choices(string.digits, k=4))
@@ -79,8 +93,54 @@ def register_user():
         print(f"Wystąpił nieoczekiwany błąd: {e}")
 
 
-def del_user_name():
-    name = input("Podaj Imię i Nazwisko: ")     # Uzytkownik podaje imie, oraz nazwisko do usuniecia
+
+
+
+def del_user_name(name):
+    found = False
+    customer_id = None
+
+    with open(file_path, mode='r') as plik:
+        reader = csv.reader(plik)
+        line = list(reader)
+
+    with open(file_path, mode='w', newline='') as plik:
+        wpisz = csv.writer(plik)
+        for wiersz in line:
+            if wiersz[1] != name:
+                wpisz.writerow(wiersz)
+            else:
+                customer_id = wiersz[0]
+                print("Twoje dane zostały usunięte")
+                found = True
+
+    if found:
+        # Usuń adres użytkownika
+        address_file = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv'
+        with open(address_file, mode='r') as plik:
+            reader = csv.reader(plik)
+            lines = list(reader)
+
+        with open(address_file, mode='w', newline='') as plik:
+            writer = csv.writer(plik)
+            for row in lines:
+                if row[0] != customer_id:
+                    writer.writerow(row)
+
+        # Usuń plik tekstowy użytkownika
+        customer_data_file = f'DATABASE/{customer_id}.txt'
+        if os.path.exists(customer_data_file):
+            os.remove(customer_data_file)
+            print(f"Plik {customer_data_file} został usunięty.")
+        else:
+            print(f"Plik {customer_data_file} nie istnieje.")
+    else:
+        print("Podany użytkownik nie istnieje")
+
+
+
+
+def del_user_ID(ID):
     found = False
 
     with open(file_path, mode='r') as plik:
@@ -90,40 +150,46 @@ def del_user_name():
     with open(file_path, mode='w', newline='') as plik:
         wpisz = csv.writer(plik)
         for wiersz in line:
-            if wiersz[1] != str(name):
+            if wiersz[0] != ID:
                 wpisz.writerow(wiersz)
             else:
                 print("Twoje dane zostały usunięte")
                 found = True
-        if not found:
-            print("Podany użytkownik nie istnieje")
 
-def del_user_ID():
-    ID = input("Podaj ID: ")
-    found = False
+    if found:
+        # Usuń adres użytkownika
+        address_file = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv'
+        with open(address_file, mode='r') as plik:
+            reader = csv.reader(plik)
+            lines = list(reader)
 
-    with open(file_path, mode='r') as plik:
-        reader = csv.reader(plik)
-        line = list(reader)
+        with open(address_file, mode='w', newline='') as plik:
+            writer = csv.writer(plik)
+            for row in lines:
+                if row[0] != ID:
+                    writer.writerow(row)
 
-    with open(file_path, mode='w', newline='') as plik:
-        wpisz = csv.writer(plik)
-        for wiersz in line:
-            if wiersz[0] != str(ID):
-                wpisz.writerow(wiersz)
-            else:
-                print("Twoje dane zostały usunięte")
-                found = True
-        if not found:
-            print("Podany użytkownik nie istnieje")
+        # Usuń plik tekstowy użytkownika
+        customer_data_file = f'DATABASE/{ID}.txt'
+        if os.path.exists(customer_data_file):
+            os.remove(customer_data_file)
+            print(f"Plik {customer_data_file} został usunięty.")
+        else:
+            print(f"Plik {customer_data_file} nie istnieje.")
+    else:
+        print("Podany użytkownik nie istnieje")
 
 
-def borrow_books(customer_id):
-    # Wybór książek do wypożyczenia przez klienta
-    books_to_borrow = input("Podaj tytuły książek do wypożyczenia (oddzielone przecinkami): ").split(',')
+def borrow_books(customer_id, **kwargs):
+    # Wyciąganie tytułów książek z argumentów przekazanych przez kwargs
+    books_to_borrow = kwargs.get('books_to_borrow', [])
+
+    if not books_to_borrow:
+        print("Nie podano żadnych książek do wypożyczenia.")
+        return
 
     # Aktualna data
-    borrow_date = date.today()
+    data = date.today()
 
     # Lista wypożyczonych książek
     borrowed_books = []
@@ -144,7 +210,8 @@ def borrow_books(customer_id):
         reader = csv.DictReader(books_file)
         books = list(reader)
 
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='w', newline='') as books_file:
+    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='w',
+              newline='') as books_file:
         fieldnames = ['ID', 'AUTHOR', 'TITLE', 'PAGES', 'CREATED', 'UPDATED', 'STATUS']
         writer = csv.DictWriter(books_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -157,14 +224,12 @@ def borrow_books(customer_id):
     customer_data_file = f'DATABASE/{customer_id}.txt'
     with open(customer_data_file, mode='a') as customer_data:
         for book in books_to_borrow:
-            customer_data.write(f"{book.strip()}, {borrow_date}\n")
+            customer_data.write(f"{book.strip()}, {data}\n")
 
     print("Książki zostały wypożyczone.")
 
-def return_book(customer_id):
-    # Wybór książki do zwrotu przez klienta
-    book_to_return = input("Podaj tytuł książki do zwrotu: ")
 
+def return_book(customer_id, book_to_return):
     # Aktualizacja statusu książki na "available"
     with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
         reader = csv.DictReader(books_file)
@@ -190,14 +255,20 @@ def return_book(customer_id):
             if book_to_return.lower() not in line.lower():
                 customer_data.write(line)
 
-    print("Książka została zwrócona.")
+    print(f"Książka '{book_to_return}' została zwrócona.")
+
+
+@dec
+def return_books(customer_id, book_to_return):
+    return_book(customer_id, book_to_return)
+
 
 def control_panel():
-    action = input("Wybierz opcję (rejestracja/usunięcie danych):")
+    action = input("Wybierz opcję (rejestracja(1)/usunięcie danych(2)):")
 
-    if action == "rejestracja":
+    if action == "1":
         return register_user()
-    elif action == "usunięcie danych":
+    elif action == "2":
         delt = input("Wybierz opcję: po(Imie nazwisko/ID):")
         if delt == "Imie nazwisko":
             return del_user_name()
@@ -210,3 +281,5 @@ def control_panel():
         print("Nieprawidłowa opcja wyboru")
         return None
 
+# borrow_books(8036, books_to_borrow=["The Object-Oriented Thought Process","The Art of Computer Programming"])
+#return_books(8036, books_to_return=["The Object-Oriented Thought Process","The Art of Computer Programming"])
