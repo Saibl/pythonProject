@@ -76,6 +76,7 @@ def register_user(name,email,phone,country,city,street):
             writer.writerow([customer_id, name, email, phone, created, updated])
             print(f"Użytkownik został zarejestrowany: {customer_id}, {name}, {email}, {phone}, {created}, {updated}")
 
+        #Zapisanie adresu klienta do adress.csv
         ensure_newline("C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv")
         with open("C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv", mode='a', newline='') as plik:
             writer = csv.writer(plik)
@@ -264,22 +265,44 @@ def return_books(customer_id, book_to_return):
 
 
 def control_panel():
-    action = input("Wybierz opcję (rejestracja(1)/usunięcie danych(2)):")
+    a=0
+    while True:
+        action = int(input("Wybierz opcję: (rejestracja(1) / usunięcie danych(2) / wypożyczenie książki (3) / oddanie książki(4) / exit(5): "))
 
-    if action == "1":
-        return register_user()
-    elif action == "2":
-        delt = input("Wybierz opcję: po(Imie nazwisko/ID):")
-        if delt == "Imie nazwisko":
-            return del_user_name()
-        elif delt == "ID":
-            return del_user_ID()
+        if action==1:
+            print("Proszę wprowadzić kolejno: Imie-Nazwisko, E-mail, nr telefonu, Państwo, Miasto, Ulicę ")
+            name = input("Imię-Nazwisko: ")
+            email = input("Adres e-mail: ")
+            phone = input("Numer telefonu: ")
+            country = input("Aktualny Kraj: ")
+            city = input("Miasto: ")
+            street = input("Nazwa ulicy: ")
+            register_user(name,email,phone,country,city,street)
+        elif action==2:
+            delt = int(input("Wybierz opcję usunięcia danych: po(Imie-Nazwisko(1)/ID(2)):"))
+            if delt == 1:
+                namee=input("Proszę wpisać Imie, oraz nazwisko użytkownika do usunięcia: ")
+                del_user_name(namee)
+            elif delt == 2:
+                idd = input("Proszę wpisać ID użytkownika do usunięcia: ")
+                del_user_ID(idd)
+            else:
+                print("Nieprawidłowa opcja wyboru")
+                return None
+        elif action == 3:
+            customer_id = input("Proszę podać ID użytkownika: ")
+            books = input("Proszę podać tytuły książek do wypożyczenia, oddzielone przecinkami: ").split(',')
+            borrow_books(customer_id, books_to_borrow=[book.strip() for book in books])
+        elif action == 4:
+            customer_id = input("Proszę podać ID użytkownika: ")
+            books = input("Proszę podać tytuły książek do oddania, oddzielone przecinkami: ").split(',')
+            return_books(customer_id, books_to_return=[book.strip() for book in books])
+        elif action == 5:
+            print("Wyjście z programu.")
+            break
         else:
             print("Nieprawidłowa opcja wyboru")
-            return None
-    else:
-        print("Nieprawidłowa opcja wyboru")
-        return None
+
 
 # borrow_books(8036, books_to_borrow=["The Object-Oriented Thought Process","The Art of Computer Programming"])
 #return_books(8036, books_to_return=["The Object-Oriented Thought Process","The Art of Computer Programming"])
