@@ -32,7 +32,7 @@ def ensure_newline(file_path):
         if last_char != '\n':
             file.write('\n')
 
-def add_book():
+def add_book(ID,AUTHOR,TITLE,PAGES):
     """
         Dodaje nową książkę do pliku CSV, sprawdzając unikalność ID.
 
@@ -43,10 +43,6 @@ def add_book():
         Returns:
             None
     """
-    ID = int(input("Podaj ID ksiazki: "))
-    AUTHOR = input("Podaj autora: ")
-    TITLE = input("Podaj tytul: ")
-    PAGES = int(input("Podaj liczbe stron: "))
     CREATED = date.today()
     UPDATED = date.today()
     STATUS = "available"
@@ -65,8 +61,7 @@ def add_book():
         writer.writerow([ID, AUTHOR, TITLE, PAGES, CREATED, UPDATED, STATUS])
         print(f"Ksiazka wpisana: {ID}, {AUTHOR}, {TITLE}, {PAGES}, {CREATED}, {UPDATED}, {STATUS}")
 
-def del_book_ID():
-    ID = input("Podaj ID ksiazki do usuniecia: ")
+def del_book_ID(ID):
     found = False  # Zmienna do śledzenia, czy znaleziono książkę o podanym ID
 
     with open(file_path, mode='r') as plik:
@@ -84,8 +79,7 @@ def del_book_ID():
         if not found:
             print("Podana ksiazka nie istnieje")
 
-def del_book_name():
-    tytul = input("Podaj tytul ksiazki do usuniecia: ")     # Uzytkownik podaje tytul ksiazki do usuniecia
+def del_book_name(tytul):
     found = False  # Zmienna do śledzenia, czy znaleziono książkę o podanym tytule
 
     with open(file_path, mode='r') as plik:

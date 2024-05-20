@@ -313,7 +313,12 @@ def control_panel():
         if action==1:
             name = input("Imię-Nazwisko: ")
             email = input("Adres e-mail: ")
-            phone = input("Numer telefonu: ")
+            while True:
+                phone = input("Numer telefonu (9 cyfr): ")
+                if len(phone) == 9 and phone.isdigit():
+                    break
+                else:
+                    print("Numer telefonu musi składać się z dokładnie 9 cyfr. Spróbuj ponownie.")
             country = input("Aktualny Kraj: ")
             city = input("Miasto: ")
             street = input("Nazwa ulicy: ")
