@@ -298,7 +298,6 @@ def control_panel():
         Returns:
             None
         """
-    a=0
     while True:
         print("\nWybierz opcję:")
         print("1. Rejestracja użytkownika")
