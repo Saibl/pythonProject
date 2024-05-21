@@ -43,6 +43,7 @@ import csv
 from datetime import date
 import random
 import string
+import tkinter as tk
 
 file_path = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\customer.csv'
 
@@ -301,12 +302,10 @@ def control_panel():
     while True:
         print("\nWybierz opcję:")
         print("1. Rejestracja użytkownika")
-        print("2. Usunięcie użytkownika po imieniu")
-        print("3. Usunięcie użytkownika po ID")
-        print("4. Wypożyczenie książek")
-        print("5. Zwrot książek")
-        print("6. Wyświetl użytkowników")
-        print("7. Wyjście")
+        print("2. Usunięcie użytkownika po imieniu/id")
+        print("3. Wypożyczenie książek")
+        print("4. Zwrot książek")
+        print("5. Wyjście")
 
         action = int(input("Wybierz opcję (1-7): "))
 
