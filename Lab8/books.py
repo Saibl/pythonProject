@@ -1,19 +1,39 @@
-## 2. Moduł obsługi książek zawierający 2 funkcje:
-## funkcja 1: dodanie nowej książki do bazy (book.csv)
-## funkcja 2: usuwanie książki do bazy opcje: wględem ID lub tytułu (book.csv)
-##
-
 """
-Moduł Library
+books.py
 
-Ten moduł zawiera funkcje do zarządzania biblioteką książek. Zawiera funkcje dodawania,
-usuwanie oraz wyświetlania książek.
+DESCRIPTION
+    This module allows the user to manage books in a library system, including adding new books,
+    deleting books by ID or title, and displaying the contents of the book catalog.
 
-Funkcje:
-    - add_book: Dodaje nową książkę do biblioteki.
-    - del_book_ID: Usuwa książkę z biblioteki na podstawie podanego ID.
-    - del_book_name: Usuwa książkę z biblioteki na podstawie podanego tytułu.
-    - output: Wyświetla zawartość biblioteki książek.
+    This tool uses a CSV file to store data about books in the library.
+
+    This script requires the `csv` and `datetime` packages to be installed within the Python environment
+    you are running this script in.
+
+FUNCTIONS
+    This module contains the following functions:
+
+    * ensure_newline(file_path)
+        Ensures there is a newline at the end of the specified file.
+
+    * add_book(ID, AUTHOR, TITLE, PAGES)
+        Adds a new book to the CSV file, checking for unique ID.
+
+    * del_book_ID(ID)
+        Deletes a book from the CSV file based on the given ID.
+
+    * del_book_name(tytul)
+        Deletes a book from the CSV file based on the given title.
+
+    * output()
+        Prints the content of the CSV file containing the book catalog.
+
+EXAMPLES
+    ensure_newline(file_path)
+    add_book(1234, "J.K. Rowling", "Harry Potter", 500)
+    del_book_ID(1234)
+    del_book_name("Harry Potter")
+    output()
 """
 
 import csv

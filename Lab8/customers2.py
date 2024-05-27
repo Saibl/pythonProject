@@ -1,42 +1,62 @@
-## 3. Moduł obsługi klienta zawierający funkcje:
-## funkcja 1: rejestracja nowego klienta lub usuwanie danych klienta z bazy
-## funkcja 2: dodawanie (przez administratora) danych
-## nowego klienta do bazy tj. do pliku customer.csv i address.csv
-## Nowy klient podaje swoje dane (imie, nazwisko), nadawany jest w/w klientowi losowy numer ID złożony z 4 cyfr
-## w folderze DATABASE tworzony jest plik tekstowy (nazwa pliku to ID klienta)
-## do którego będą zapisywane dane wypożyczonej przez klienta książki oraz
-## data wypożyczenia a potem zwrotu książki
-## funkcja 3: usuwanie danych klienta opcje: względem ID lub NAME
-## Wypożyczanie książki/-ek przez użytkownika 2 funkcje:
-## funkcja 4: wypożyczenie książki lub kilku książek przez klienta
-## funkcja 5: zwrot 1 książki przez klienta
 
-"""
-System zarządzania biblioteką
+'''
+NAME
+    customers2
 
-Ten program jest systemem zarządzania biblioteką, który umożliwia rejestrację użytkowników,
-usuwanie danych użytkowników, wypożyczanie książek i zwracanie książek. Wszystkie operacje
-są zapisywane w plikach CSV, a dane o wypożyczeniach są przechowywane w osobnych plikach
-tekstowych dla każdego użytkownika.
+DESCRIPTION
+    This module allows the user to manage a library system, including registering users,
+    deleting users, borrowing books, and returning books.
 
-Pliki:
-    - customer.csv: Przechowuje informacje o zarejestrowanych użytkownikach.
-    - address.csv: Przechowuje adresy zarejestrowanych użytkowników.
-    - book.csv: Przechowuje informacje o książkach dostępnych w bibliotece.
-    - DATABASE/: Katalog przechowujący pliki tekstowe z danymi o wypożyczeniach dla każdego użytkownika.
+    This tool uses CSV files to store data about users, addresses, and books.
 
-Funkcje:
-    - dec(func)
-    - output2()
-    - ensure_newline(file_path)
-    - register_user(name, email, phone, country, city, street)
-    - del_user_name(name)
-    - del_user_ID(ID)
-    - borrow_books(customer_id, **kwargs)
-    - return_book(customer_id, book_to_return)
-    - return_books(customer_id, book_to_return)
-    - control_panel()
-"""
+    This script requires the `os`, `csv`, `datetime`, `random`, `string`, `tkinter`,
+    and `tkinter.messagebox` packages to be installed within the Python environment
+    you are running this script in.
+
+FUNCTIONS
+    This module contains the following functions:
+    * register_user(name, email, phone, city, street) - registers a user with the given details
+      and saves the information in customer.csv and address.csv files.
+
+    * del_user_name(name) - deletes a user by their name from the customer.csv file and
+      corresponding data from address.csv and the user's data file.
+
+    * del_user_ID(ID) - deletes a user by their ID from the customer.csv file and corresponding
+      data from address.csv and the user's data file.
+
+    * borrow_books(customer_id, **kwargs) - borrows books for a user by their customer ID,
+      updating the status of books in book.csv and recording the borrowed books in the user's data file.
+
+    * return_book(customer_id, book_to_return) - returns a book for a user by their customer ID,
+      updating the status of the book in book.csv and removing the book from the user's data file.
+
+    * output2() - prints the content of the customer.csv file.
+
+    * ensure_newline(file_path) - ensures there is a newline at the end of the specified file.
+
+    * register_user_gui() - opens a GUI for user registration.
+
+    * del_user_gui() - opens a GUI for user deletion.
+
+    * borrow_books_gui() - opens a GUI for borrowing books.
+
+    * return_book_gui() - opens a GUI for returning books.
+
+    * add_book_gui() - opens a GUI for adding books to the library.
+
+    * del_book_gui() - opens a GUI for deleting books from the library.
+
+    * call() - starts the main application GUI with options to register users, delete users,
+      borrow books, return books, add books, and delete books.
+
+EXAMPLES
+    register_user("John Doe", "john@example.com", "123456789", "Warsaw", "Main St.")
+    del_user_name("John Doe")
+    del_user_ID("1234")
+    borrow_books("1234", books_to_borrow=["Book Title 1", "Book Title 2"])
+    return_book("1234", book_to_return="Book Title 1")
+    output2()
+'''
 
 import os
 import csv
@@ -44,6 +64,8 @@ from datetime import date
 import random
 import string
 import tkinter as tk
+from tkinter import messagebox
+from books import add_book,del_book_ID,del_book_name
 
 file_path = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\customer.csv'
 
@@ -57,10 +79,20 @@ def dec(func):
         books_to_return = kwargs.get('books_to_return', [])
 
         if not books_to_return:
-            print("Nie podano żadnych książek do wypożyczenia.")
+            print("Nie podano żadnych książek do zwrotu.")
             return
+
         for book_to_return in books_to_return:
-            book_to_return = book_to_return.strip()  # Usunięcie zbędnych spacji
+            book_to_return = book_to_return.strip()
+            # Sprawdzenie czy książka istnieje w bazie danych
+            with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv',
+                      mode='r') as books_file:
+                reader = csv.DictReader(books_file)
+                existing_books = {row['TITLE'] for row in reader}
+
+            if book_to_return not in existing_books:
+                print(f"Książka '{book_to_return}' nie istnieje w bazie danych.")
+                continue
             func(customer_id, book_to_return)
 
     return wrapper
@@ -87,13 +119,15 @@ def ensure_newline(file_path):
 
 
 
-def register_user(name,email,phone,country,city,street):
+def register_user(name,email,phone,city,street):
     customer_file = 'DATABASE/customer.csv'
     ensure_newline(file_path)
+
     # Generowanie losowego ID klienta
     customer_id = ''.join(random.choices(string.digits, k=4))
 
     # Aktualna data
+    country = "Polska"
     created = date.today()
     updated = date.today()
 
@@ -210,11 +244,26 @@ def del_user_ID(ID):
 
 
 def borrow_books(customer_id, **kwargs):
+    # Sprawdzenie czy ID użytkownika istnieje
+    if not os.path.exists(f'DATABASE/{customer_id}.txt'):
+        print(f"Użytkownik o ID {customer_id} nie istnieje.")
+        return
+
     # Wyciąganie tytułów książek z argumentów przekazanych przez kwargs
     books_to_borrow = kwargs.get('books_to_borrow', [])
 
     if not books_to_borrow:
         print("Nie podano żadnych książek do wypożyczenia.")
+        return
+
+    non_existing_books = []
+    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
+        reader = csv.DictReader(books_file)
+        existing_books = {row['TITLE'] for row in reader}
+        non_existing_books = [book for book in books_to_borrow if book not in existing_books]
+
+    if non_existing_books:
+        print(f"Następujące książki nie istnieją w bazie danych: {', '.join(non_existing_books)}")
         return
 
     # Aktualna data
@@ -258,7 +307,13 @@ def borrow_books(customer_id, **kwargs):
     print("Książki zostały wypożyczone.")
 
 
+@dec
 def return_book(customer_id, book_to_return):
+    # Sprawdzenie czy ID użytkownika istnieje
+    if not os.path.exists(f'DATABASE/{customer_id}.txt'):
+        print(f"Użytkownik o ID {customer_id} nie istnieje.")
+        return
+
     # Aktualizacja statusu książki na "available"
     with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
         reader = csv.DictReader(books_file)
@@ -287,66 +342,198 @@ def return_book(customer_id, book_to_return):
     print(f"Książka '{book_to_return}' została zwrócona.")
 
 
-@dec
-def return_books(customer_id, book_to_return):
-    return_book(customer_id, book_to_return)
-
-
-def control_panel():
-    """
-        Panel kontrolny do zarządzania biblioteką.
-
-        Returns:
-            None
-        """
-    while True:
-        print("\nWybierz opcję:")
-        print("1. Rejestracja użytkownika")
-        print("2. Usunięcie użytkownika po imieniu/id")
-        print("3. Wypożyczenie książek")
-        print("4. Zwrot książek")
-        print("5. Wyjście")
-
-        action = int(input("Wybierz opcję (1-7): "))
-
-        if action==1:
-            name = input("Imię-Nazwisko: ")
-            email = input("Adres e-mail: ")
-            while True:
-                phone = input("Numer telefonu (9 cyfr): ")
-                if len(phone) == 9 and phone.isdigit():
-                    break
-                else:
-                    print("Numer telefonu musi składać się z dokładnie 9 cyfr. Spróbuj ponownie.")
-            country = input("Aktualny Kraj: ")
-            city = input("Miasto: ")
-            street = input("Nazwa ulicy: ")
-            register_user(name,email,phone,country,city,street)
-        elif action==2:
-            delt = int(input("Wybierz opcję usunięcia danych: po(Imie-Nazwisko(1)/ID(2)):"))
-            if delt == 1:
-                namee=input("Proszę wpisać Imie, oraz nazwisko użytkownika do usunięcia: ")
-                del_user_name(namee)
-            elif delt == 2:
-                idd = input("Proszę wpisać ID użytkownika do usunięcia: ")
-                del_user_ID(idd)
-            else:
-                print("Nieprawidłowa opcja wyboru")
-                return None
-        elif action == 3:
-            customer_id = input("Proszę podać ID użytkownika: ")
-            books = input("Proszę podać tytuły książek do wypożyczenia, oddzielone przecinkami: ").split(',')
-            borrow_books(customer_id, books_to_borrow=[book.strip() for book in books])
-        elif action == 4:
-            customer_id = input("Proszę podać ID użytkownika: ")
-            books = input("Proszę podać tytuły książek do oddania, oddzielone przecinkami: ").split(',')
-            return_books(customer_id, books_to_return=[book.strip() for book in books])
-        elif action == 5:
-            print("Wyjście z programu.")
-            break
-        else:
-            print("Nieprawidłowa opcja wyboru")
-
-
 # borrow_books(8036, books_to_borrow=["The Object-Oriented Thought Process","The Art of Computer Programming"])
 #return_books(8036, books_to_return=["The Object-Oriented Thought Process","The Art of Computer Programming"])
+
+def register_user_gui():
+    def register():
+        name = entry_name.get()
+        email = entry_email.get()
+        phone = entry_phone.get()
+        city = entry_city.get()
+        street = entry_street.get()
+
+        if len(phone) != 9 or not phone.isdigit():
+            messagebox.showerror("Błąd", "Numer telefonu musi mieć 9 cyfr")
+            return
+
+        if "@" not in email:
+            messagebox.showerror("Błąd", "Adres e-mail powinien zawierać znak @")
+            return
+
+        try:
+            register_user(name, email, phone, city, street)
+            messagebox.showinfo("Rejestracja użytkownika", "Użytkownik został zarejestrowany.")
+        except ValueError as e:
+            messagebox.showerror("Błąd walidacji", str(e))
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił nieoczekiwany błąd: {e}")
+
+    window = tk.Toplevel()
+    window.title("Rejestracja użytkownika")
+
+    tk.Label(window, text="Imię i nazwisko").grid(row=0, column=0)
+    entry_name = tk.Entry(window)
+    entry_name.grid(row=0, column=1)
+
+    tk.Label(window, text="Email").grid(row=1, column=0)
+    entry_email = tk.Entry(window)
+    entry_email.grid(row=1, column=1)
+
+    tk.Label(window, text="Telefon").grid(row=2, column=0)
+    entry_phone = tk.Entry(window)
+    entry_phone.grid(row=2, column=1)
+
+    tk.Label(window, text="Miasto").grid(row=3, column=0)
+    entry_city = tk.Entry(window)
+    entry_city.grid(row=3, column=1)
+
+    tk.Label(window, text="Ulica").grid(row=4, column=0)
+    entry_street = tk.Entry(window)
+    entry_street.grid(row=4, column=1)
+
+    tk.Button(window, text="Zarejestruj", command=register).grid(row=5, columnspan=2)
+
+def del_user_gui():
+    def del_user():
+        if var.get() == 1:
+            name = entry_del.get()
+            del_user_name(name)
+        elif var.get() == 2:
+            user_id = entry_del.get()
+            del_user_ID(user_id)
+
+    window = tk.Toplevel()
+    window.title("Usunięcie użytkownika")
+
+    var = tk.IntVar()
+
+    tk.Radiobutton(window, text="Imię i nazwisko", variable=var, value=1).grid(row=0, column=0)
+    tk.Radiobutton(window, text="ID", variable=var, value=2).grid(row=0, column=1)
+
+    entry_del = tk.Entry(window)
+    entry_del.grid(row=1, columnspan=2)
+
+    tk.Button(window, text="Usuń", command=del_user).grid(row=2, columnspan=2)
+
+def borrow_books_gui():
+    def borrow():
+        customer_id = entry_customer_id.get()
+        books = entry_books.get().split(',')
+        borrow_books(customer_id, books_to_borrow=[book.strip() for book in books])
+
+    window = tk.Toplevel()
+    window.title("Wypożyczenie książek")
+
+    tk.Label(window, text="ID użytkownika").grid(row=0, column=0)
+    entry_customer_id = tk.Entry(window)
+    entry_customer_id.grid(row=0, column=1)
+
+    tk.Label(window, text="Książki (oddzielone przecinkami)").grid(row=1, column=0)
+    entry_books = tk.Entry(window)
+    entry_books.grid(row=1, column=1)
+
+    tk.Button(window, text="Wypożycz", command=borrow).grid(row=2, columnspan=2)
+
+def return_book_gui():
+    def return_books_action():
+        customer_id = entry_customer_id.get()
+        books = entry_books.get().split(',')
+        return_book(customer_id, books_to_return=[book.strip() for book in books])
+
+    window = tk.Toplevel()
+    window.title("Zwrot książek")
+
+    tk.Label(window, text="ID użytkownika").grid(row=0, column=0)
+    entry_customer_id = tk.Entry(window)
+    entry_customer_id.grid(row=0, column=1)
+
+    tk.Label(window, text="Książki (oddzielone przecinkami)").grid(row=1, column=0)
+    entry_books = tk.Entry(window)
+    entry_books.grid(row=1, column=1)
+
+    tk.Button(window, text="Zwróć", command=return_books_action).grid(row=2, columnspan=2)
+
+def add_book_gui():
+    def add():
+        book_id = entry_id.get()
+        author = entry_author.get()
+        title = entry_title.get()
+        pages = entry_pages.get()
+
+        if not book_id.isdigit():
+            messagebox.showerror("Błąd", "ID musi być liczbą")
+            return
+
+        if not pages.isdigit():
+            messagebox.showerror("Błąd", "Liczba stron musi być liczbą")
+            return
+
+        try:
+            add_book(int(book_id), author, title, int(pages))
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił nieoczekiwany błąd: {e}")
+
+    window = tk.Toplevel()
+    window.title("Dodawanie książki")
+
+    tk.Label(window, text="ID").grid(row=0, column=0)
+    entry_id = tk.Entry(window)
+    entry_id.grid(row=0, column=1)
+
+    tk.Label(window, text="Autor").grid(row=1, column=0)
+    entry_author = tk.Entry(window)
+    entry_author.grid(row=1, column=1)
+
+    tk.Label(window, text="Tytuł").grid(row=2, column=0)
+    entry_title = tk.Entry(window)
+    entry_title.grid(row=2, column=1)
+
+    tk.Label(window, text="Liczba stron").grid(row=3, column=0)
+    entry_pages = tk.Entry(window)
+    entry_pages.grid(row=3, column=1)
+
+    tk.Button(window, text="Dodaj", command=add).grid(row=4, columnspan=2)
+
+
+def del_book_gui():
+    def del_book():
+        if var.get() == 1:
+            title = entry_del.get()
+            del_book_name(title)
+        elif var.get() == 2:
+            book_id = entry_del.get()
+            if not book_id.isdigit():
+                messagebox.showerror("Błąd", "ID musi być liczbą")
+                return
+            del_book_ID(int(book_id))
+
+    window = tk.Toplevel()
+    window.title("Usunięcie książki")
+
+    var = tk.IntVar()
+
+    tk.Radiobutton(window, text="Tytuł", variable=var, value=1).grid(row=0, column=0)
+    tk.Radiobutton(window, text="ID", variable=var, value=2).grid(row=0, column=1)
+
+    entry_del = tk.Entry(window)
+    entry_del.grid(row=1, columnspan=2)
+
+    tk.Button(window, text="Usuń", command=del_book).grid(row=2, columnspan=2)
+
+def call():
+    root = tk.Tk()
+    root.title("Biblioteka")
+
+    width = 400
+    height = 300
+    root.geometry(f"{width}x{height}")
+
+    tk.Button(root, text="Rejestracja użytkownika", command=register_user_gui).pack(fill='x')
+    tk.Button(root, text="Usunięcie użytkownika", command=del_user_gui).pack(fill='x')
+    tk.Button(root, text="Dodawanie książki", command=add_book_gui).pack(fill='x')
+    tk.Button(root, text="Usunięcie książki", command=del_book_gui).pack(fill='x')
+    tk.Button(root, text="Wypożyczenie książek", command=borrow_books_gui).pack(fill='x')
+    tk.Button(root, text="Zwrot książek", command=return_book_gui).pack(fill='x')
+
+    root.mainloop()

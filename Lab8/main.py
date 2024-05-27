@@ -4,8 +4,7 @@
 import customers2
 
 def __main__():
-    customers2.control_panel()
-    customers2.output2()
+    customers2.call()
 
 if __name__ == "__main__":
     __main__()
