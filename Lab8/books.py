@@ -40,7 +40,7 @@ import csv
 from datetime import date
 
 
-file_path = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv'
+file_path = 'Library/book.csv'
 
 def ensure_newline(file_path):
     with open(file_path, 'r+') as file:
@@ -118,11 +118,10 @@ def del_book_name(tytul):
             print("Podana ksiazka nie istnieje")
 
 def output():
-    with open('C:\\Users\Admin\PycharmProjects\pythonProject\Lab8\Library\\book.csv', mode='r') as csv_file:
+    with open(file_path, mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             print(row)
-
 
 
 

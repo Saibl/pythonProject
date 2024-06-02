@@ -67,7 +67,9 @@ import tkinter as tk
 from tkinter import messagebox
 from books import add_book,del_book_ID,del_book_name
 
-file_path = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\customer.csv'
+file_path = 'Library/customer.csv'
+file_path2 = 'Library/book.csv'
+file_path3 = 'Library/address.csv'
 
 if not os.path.exists('DATABASE'):
     os.makedirs('DATABASE')
@@ -85,8 +87,7 @@ def dec(func):
         for book_to_return in books_to_return:
             book_to_return = book_to_return.strip()
             # Sprawdzenie czy książka istnieje w bazie danych
-            with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv',
-                      mode='r') as books_file:
+            with open(file_path2, mode='r') as books_file:
                 reader = csv.DictReader(books_file)
                 existing_books = {row['TITLE'] for row in reader}
 
@@ -139,8 +140,8 @@ def register_user(name,email,phone,city,street):
             print(f"Użytkownik został zarejestrowany: {customer_id}, {name}, {email}, {phone}, {created}, {updated}")
 
         #Zapisanie adresu klienta do adress.csv
-        ensure_newline("C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv")
-        with open("C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv", mode='a', newline='') as plik:
+        ensure_newline(file_path3)
+        with open(file_path3, mode='a', newline='') as plik:
             writer = csv.writer(plik)
             writer.writerow([customer_id, street, city, country])
             print(customer_id, street, city, country)
@@ -179,12 +180,11 @@ def del_user_name(name):
 
     if found:
         # Usuń adres użytkownika
-        address_file = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv'
-        with open(address_file, mode='r') as plik:
+        with open(file_path3, mode='r') as plik:
             reader = csv.reader(plik)
             lines = list(reader)
 
-        with open(address_file, mode='w', newline='') as plik:
+        with open(file_path3, mode='w', newline='') as plik:
             writer = csv.writer(plik)
             for row in lines:
                 if row[0] != customer_id:
@@ -221,12 +221,11 @@ def del_user_ID(ID):
 
     if found:
         # Usuń adres użytkownika
-        address_file = 'C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\address.csv'
-        with open(address_file, mode='r') as plik:
+        with open(file_path3, mode='r') as plik:
             reader = csv.reader(plik)
             lines = list(reader)
 
-        with open(address_file, mode='w', newline='') as plik:
+        with open(file_path3, mode='w', newline='') as plik:
             writer = csv.writer(plik)
             for row in lines:
                 if row[0] != ID:
@@ -257,7 +256,7 @@ def borrow_books(customer_id, **kwargs):
         return
 
     non_existing_books = []
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
+    with open(file_path2, mode='r') as books_file:
         reader = csv.DictReader(books_file)
         existing_books = {row['TITLE'] for row in reader}
         non_existing_books = [book for book in books_to_borrow if book not in existing_books]
@@ -273,7 +272,7 @@ def borrow_books(customer_id, **kwargs):
     borrowed_books = []
 
     # Sprawdzenie dostępności i aktualności książek w bazie danych CSV
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
+    with open(file_path2, mode='r') as books_file:
         reader = csv.DictReader(books_file)
         for row in reader:
             if row['TITLE'] in books_to_borrow:
@@ -284,11 +283,11 @@ def borrow_books(customer_id, **kwargs):
                     return
 
     # Aktualizacja statusu książek na "unavailable"
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
+    with open(file_path2 , mode='r') as books_file:
         reader = csv.DictReader(books_file)
         books = list(reader)
 
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='w',
+    with open(file_path2 , mode='w',
               newline='') as books_file:
         fieldnames = ['ID', 'AUTHOR', 'TITLE', 'PAGES', 'CREATED', 'UPDATED', 'STATUS']
         writer = csv.DictWriter(books_file, fieldnames=fieldnames)
@@ -315,7 +314,7 @@ def return_book(customer_id, book_to_return):
         return
 
     # Aktualizacja statusu książki na "available"
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='r') as books_file:
+    with open(file_path2, mode='r') as books_file:
         reader = csv.DictReader(books_file)
         books = list(reader)
 
@@ -323,7 +322,7 @@ def return_book(customer_id, book_to_return):
         if book['TITLE'] == book_to_return and book['STATUS'] == 'unavailable':
             book['STATUS'] = 'available'
 
-    with open('C:\\Users\\Admin\\PycharmProjects\\pythonProject\\Lab8\\Library\\book.csv', mode='w', newline='') as books_file:
+    with open(file_path2, mode='w', newline='') as books_file:
         fieldnames = ['ID', 'AUTHOR', 'TITLE', 'PAGES', 'CREATED', 'UPDATED', 'STATUS']
         writer = csv.DictWriter(books_file, fieldnames=fieldnames)
         writer.writeheader()
